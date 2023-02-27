@@ -117,10 +117,10 @@ class EncoderDecoderLSTMModel(PreTrainedModel):
         
         self.encoder = EncRNN(self.src_vsz, config.encoder.hidden_size, 
                               config.encoder.hidden_size, 
-                              config.encoder.num_hidden_layers, self.use_birnn, 0.4,
+                              config.encoder.num_hidden_layers, self.use_birnn, 0.3,
                               pad_token_id=self.pad_token_id)
         self.decoder = DecRNN(self.tgt_vsz, config.decoder.hidden_size, config.decoder.hidden_size, 
-                              config.decoder.num_hidden_layers, self.use_birnn, 0.4)
+                              config.decoder.num_hidden_layers, self.use_birnn, 0.3)
         self.n_layers = config.encoder.num_hidden_layers
         self.hidden_dim = config.encoder.hidden_size
         

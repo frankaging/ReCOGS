@@ -1,4 +1,5 @@
 results_cogs_notebook/
+results_*/
 openai-api/
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -627,7 +627,7 @@ for lf in args.lfs.split(";"):
         today = date.today()
         date = today.strftime("%b-%d-%Y")
         json_object = json.dumps(results, indent=4)
-        data_filename = date+"_"+data_variant+"_"+lf
+        data_filename = date+"_"+model_name+"_"+data_variant+"_"+lf
         with open(os.path.join(args.output_dir, f"{data_filename}.json"), "w") as outfile:
             outfile.write(json_object)
 

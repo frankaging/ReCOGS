@@ -256,8 +256,8 @@ def translate_invariant_form(lf):
             pred = conj.split()[2]
             first_arg = conj.split()[-4]
             second_arg = conj.split()[-2]
-            if first_arg == second_arg:
-                continue # this is wrong, we dont decode, let error casacade
+            if first_arg == second_arg or first_arg in nouns_map:
+                continue # this is index collision, we casacade the error.
             if second_arg.isnumeric() and second_arg in nouns_map:
                 second_arg = nouns_map[second_arg]
                 new_conj = f"{role} . {pred} ( {second_arg} )"

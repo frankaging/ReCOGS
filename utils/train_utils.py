@@ -238,7 +238,7 @@ def translate_invariant_form(lf):
         nouns_map[original_var] = new_noun
         new_var += 1
     
-    conjs_set = set([])
+    nmod_conjs_set = set([])
     conjs = lf.split(" ; ")[-1].split(" AND ")
     vp_conjs_map = {}
     nested_conjs = []
@@ -250,7 +250,7 @@ def translate_invariant_form(lf):
             first_arg = conj.split()[-4]
             second_arg = conj.split()[-2]
             new_conj = f"{role} . {pred} ( {nouns_map[first_arg]} , {nouns_map[second_arg]} )"
-            conjs_set.add(new_conj)
+            nmod_conjs_set.add(new_conj)
         else:
             role = conj.split()[0]
             pred = conj.split()[2]
@@ -298,11 +298,12 @@ def translate_invariant_form(lf):
             if conj['first_arg'] == conj['second_arg']:
                 continue
             nested_conjs.append(conj)
-
+    
     filtered_conjs_set = set([])
     for k, v in vp_conjs_map.items():
         vp_conjs_map[k].sort()
     for k, v in vp_conjs_map.items():
         filtered_conjs_set.add(" AND ".join(v))
-    
+    for conj in nmod_conjs_set:
+        filtered_conjs_set.add(conj)
     return filtered_conjs_set

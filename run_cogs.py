@@ -452,7 +452,13 @@ for lf in args.lfs.split(";"):
                 for i in range(len(decoded_preds)):
 
                     # use conj-based eval function.
-                    if check_equal(decoded_labels[i], decoded_preds[i]):
+                    str_eq = check_equal(decoded_labels[i], decoded_preds[i])
+                    set_eq = check_set_equal(decoded_labels[i], decoded_preds[i])
+                    if str_eq != set_eq:
+                        print(decoded_preds[i])
+                        print(decoded_labels[i])
+                        
+                    if str_eq:
                         correct_count += 1
                     else:
                         pass

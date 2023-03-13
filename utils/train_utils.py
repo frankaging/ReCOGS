@@ -12,6 +12,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import logging
 import time
 from utils.cogs_utils import *
+from utils.second_looks_utils import *
 import _pickle as cPickle
 from transformers import AutoModelForMaskedLM, AutoTokenizer, BertModel, BertConfig
 from model.encoder_decoder_hf import EncoderDecoderConfig, EncoderDecoderModel
@@ -228,12 +229,48 @@ def check_set_equal(left_lf, right_lf):
     except:
         return False
     
+recogs_np_re = re.compile(r"""
+    ^
+    \s*(\*)?
+    \s*(\w+?)\s*
+    \(
+    \s*(.+?)\s*
+    \)
+    \s*$""", re.VERBOSE)
+
+recogs_pred_re = re.compile(r"""
+    ^
+    \s*(\w+?)\s*
+    \.
+    \s*(\w+?)\s*
+    \(
+    \s*(.+?)\s*
+    ,
+    \s*(.+?)\s*
+    \)
+    \s*$""", re.VERBOSE)
+
+recogs_mod_re = re.compile(r"""
+    ^
+    \s*(\w+?)\s*
+    \.
+    \s*(\w+?)\s*
+    \(
+    \s*(.+?)\s*
+    ,
+    \s*(.+?)\s*
+    \)
+    \s*$""", re.VERBOSE)
+
 def translate_invariant_form(lf):
     nouns = lf.split(" AND ")[0].split(" ; ")[:-1]
     nouns_map = {}
     new_var = 0
     for noun in nouns:
-        original_var = noun.split()[-2]
+        # check format.
+        if not recogs_np_re.search(noun):
+            return {} # this is format error, we casacade the error.
+        _, _, original_var = recogs_np_re.search(noun).groups()
         new_noun = noun.replace(str(original_var), str(new_var))
         nouns_map[original_var] = new_noun
         new_var += 1
@@ -245,18 +282,17 @@ def translate_invariant_form(lf):
     childen_count_map = {}
     for conj in conjs:
         if "nmod" in conj:
-            role = conj.split()[0]
-            pred = conj.split()[2]
-            first_arg = conj.split()[-4]
-            second_arg = conj.split()[-2]
+            if not recogs_mod_re.search(conj):
+                return {} # this is format error, we casacade the error.
+            role, pred, first_arg, second_arg = recogs_mod_re.search(conj).groups()
             new_conj = f"{role} . {pred} ( {nouns_map[first_arg]} , {nouns_map[second_arg]} )"
             nmod_conjs_set.add(new_conj)
         else:
-            role = conj.split()[0]
-            pred = conj.split()[2]
-            first_arg = conj.split()[-4]
-            second_arg = conj.split()[-2]
-            if first_arg == second_arg or first_arg in nouns_map:
+            if not recogs_pred_re.search(conj):
+                return {} # this is format error, we casacade the error.
+            
+            role, pred, first_arg, second_arg = recogs_pred_re.search(conj).groups()
+            if first_arg == second_arg or first_arg in nouns_map or not first_arg.isnumeric():
                 return {} # this is index collision, we casacade the error.
             if second_arg.isnumeric() and second_arg in nouns_map:
                 second_arg = nouns_map[second_arg]

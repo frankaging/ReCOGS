@@ -256,6 +256,8 @@ def translate_invariant_form(lf):
             pred = conj.split()[2]
             first_arg = conj.split()[-4]
             second_arg = conj.split()[-2]
+            if first_arg == second_arg:
+                continue # this is wrong, we dont decode, let error casacade
             if second_arg.isnumeric() and second_arg in nouns_map:
                 second_arg = nouns_map[second_arg]
                 new_conj = f"{role} . {pred} ( {second_arg} )"
@@ -296,25 +298,8 @@ def translate_invariant_form(lf):
             if conj['first_arg'] == conj['second_arg']:
                 continue
             nested_conjs.append(conj)
-    
+
     filtered_conjs_set = set([])
-    for conj in conjs_set:
-        if "nmod" not in conj:
-            if conj.split()[-2].isnumeric():
-                # we need to parse more.
-                role = conj.split()[0]
-                pred = conj.split()[2]
-                first_arg = conj.split()[-4]
-                second_arg = conj.split()[-2]
-                second_arg = " AND ".join(vp_conjs_map[second_arg])
-                new_conj = f"{role} . {pred} ( {second_arg} )"
-                if first_arg in vp_conjs_map:
-                    vp_conjs_map[first_arg].append(new_conj)
-                else:
-                    vp_conjs_map[first_arg] = [new_conj]
-        else:
-            filtered_conjs_set.add(conj)
-    
     for k, v in vp_conjs_map.items():
         vp_conjs_map[k].sort()
     for k, v in vp_conjs_map.items():

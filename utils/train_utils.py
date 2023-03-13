@@ -264,13 +264,16 @@ recogs_mod_re = re.compile(r"""
 
 def translate_invariant_form(lf):
     nouns = lf.split(" AND ")[0].split(" ; ")[:-1]
+    complements = set(lf.split(" ; ")[-1].split())
     nouns_map = {}
     new_var = 0
     for noun in nouns:
         # check format.
         if not recogs_np_re.search(noun):
-            return {} # this is format error, we casacade the error.
+            return {} # this is format error, we cascade the error.
         _, _, original_var = recogs_np_re.search(noun).groups()
+        if original_var not in complements:
+            return {} # var must be used, we cascade the error.
         new_noun = noun.replace(str(original_var), str(new_var))
         nouns_map[original_var] = new_noun
         new_var += 1
@@ -283,17 +286,17 @@ def translate_invariant_form(lf):
     for conj in conjs:
         if "nmod" in conj:
             if not recogs_mod_re.search(conj):
-                return {} # this is format error, we casacade the error.
+                return {} # this is format error, we cascade the error.
             role, pred, first_arg, second_arg = recogs_mod_re.search(conj).groups()
             new_conj = f"{role} . {pred} ( {nouns_map[first_arg]} , {nouns_map[second_arg]} )"
             nmod_conjs_set.add(new_conj)
         else:
             if not recogs_pred_re.search(conj):
-                return {} # this is format error, we casacade the error.
+                return {} # this is format error, we cascade the error.
             
             role, pred, first_arg, second_arg = recogs_pred_re.search(conj).groups()
             if first_arg == second_arg or first_arg in nouns_map or not first_arg.isnumeric():
-                return {} # this is index collision, we casacade the error.
+                return {} # this is index collision, we cascade the error.
             if second_arg.isnumeric() and second_arg in nouns_map:
                 second_arg = nouns_map[second_arg]
                 new_conj = f"{role} . {pred} ( {second_arg} )"
@@ -318,7 +321,7 @@ def translate_invariant_form(lf):
                     vp_conjs_map[first_arg].append(new_conj)
                 else:
                     vp_conjs_map[first_arg] = [new_conj]
-    
+
     while_loop_count = 0
     while len(nested_conjs) > 0:
         while_loop_count += 1

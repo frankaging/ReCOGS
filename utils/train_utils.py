@@ -244,10 +244,11 @@ def translate_invariant_form(lf):
     for conj in conjs:
         try:
             if "nmod" in conj:
+                role = conj.split()[0]
+                pred = conj.split()[2]
                 first_arg = conj.split()[-4]
                 second_arg = conj.split()[-2]
-                new_conj = conj.replace(first_arg, nouns_map[first_arg])
-                new_conj = new_conj.replace(second_arg, nouns_map[second_arg])
+                new_conj = f"{role} . {pred} ( {nouns_map[first_arg]} , {nouns_map[second_arg]} )"
                 conjs_set.add(new_conj)
             else:
                 role = conj.split()[0]

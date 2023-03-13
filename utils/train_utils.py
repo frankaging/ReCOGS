@@ -280,14 +280,21 @@ def translate_invariant_form(lf):
                     vp_conjs_map[first_arg].append(new_conj)
                 else:
                     vp_conjs_map[first_arg] = [new_conj]
-                    
+    
+    while_loop_count = 0
     while len(nested_conjs) > 0:
+        while_loop_count += 1
+        if while_loop_count > 100:
+            break # no need, this answer has to be wrong!
         conj = nested_conjs.pop(0)
         if conj['second_arg'] not in childen_count_map or childen_count_map[conj['second_arg']] == 0:
             core = " AND ".join(vp_conjs_map[conj['second_arg']])
             vp_conjs_map[conj['first_arg']].append(f"{conj['role']} . {conj['pred']} ( {core} )")
             childen_count_map[conj['first_arg']] -= 1
         else:
+            # if the conj is corrupted, then we abandon just let it go and fail to compare.
+            if conj['first_arg'] == conj['second_arg']:
+                continue
             nested_conjs.append(conj)
     
     filtered_conjs_set = set([])

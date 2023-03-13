@@ -452,8 +452,7 @@ for lf in args.lfs.split(";"):
                 for i in range(len(decoded_preds)):
 
                     # use conj-based eval function.
-                    if translate_invariant_form(decoded_labels[i]) == \
-                        translate_invariant_form(decoded_preds[i]):
+                    if check_set_equal(decoded_labels[i], decoded_preds[i]):
                         correct_count += 1
                     else:
                         pass
@@ -497,8 +496,7 @@ for lf in args.lfs.split(";"):
 
                     # use conj-based eval function.
                     cat = gen_dataset.eval_cat[total_count]
-                    if translate_invariant_form(decoded_labels[i]) == \
-                        translate_invariant_form(decoded_preds[i]):
+                    if check_set_equal(decoded_labels[i], decoded_preds[i]):
                         correct_count += 1
                         per_cat_eval[cat][0] += 1
                         if cat == "obj_pp_to_subj_pp":

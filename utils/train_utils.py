@@ -180,7 +180,17 @@ class COGSTrainer(object):
                 self.model.module.save_pretrained(os.path.join(output_dir, 'model-last'))
             else:
                 self.model.save_pretrained(os.path.join(output_dir, 'model-last'))
-                
+
+def check_set_equal(left_lf, right_lf):
+    try:
+        if translate_invariant_form(left_lf) == \
+        translate_invariant_form(right_lf):
+            return True
+        else:
+            return False
+    except:
+        return False
+    
 def translate_invariant_form(lf):
     nouns = lf.split(" AND ")[0].split(" ; ")[:-1]
     nouns_map = {}
@@ -210,15 +220,34 @@ def translate_invariant_form(lf):
                 if second_arg.isnumeric():
                     second_arg = nouns_map[second_arg]
                 new_conj = f"{role} . {pred} ( {second_arg} )"
-                if (pred, first_arg) in vp_conjs_map:
-                    vp_conjs_map[(pred, first_arg)].append(new_conj)
+                if first_arg in vp_conjs_map:
+                    vp_conjs_map[first_arg].append(new_conj)
                 else:
-                    vp_conjs_map[(pred, first_arg)] = [new_conj]
+                    vp_conjs_map[first_arg] = [new_conj]
         except:
             conjs_set.add(conj)
+    
+    filtered_conjs_set = set([])
+    for conj in conjs_set:
+        if "nmod" not in conj:
+            if conj.split()[-2].isnumeric():
+                # we need to parse more.
+                role = conj.split()[0]
+                pred = conj.split()[2]
+                first_arg = conj.split()[-4]
+                second_arg = conj.split()[-2]
+                second_arg = " AND ".join(vp_conjs_map[second_arg])
+                new_conj = f"{role} . {pred} ( {second_arg} )"
+                if first_arg in vp_conjs_map:
+                    vp_conjs_map[first_arg].append(new_conj)
+                else:
+                    vp_conjs_map[first_arg] = [new_conj]
+        else:
+            filtered_conjs_set.add(conj)
+    
     for k, v in vp_conjs_map.items():
         vp_conjs_map[k].sort()
     for k, v in vp_conjs_map.items():
-        conjs_set.add(" AND ".join(v))
-            
-    return conjs_set
+        filtered_conjs_set.add(" AND ".join(v))
+    
+    return filtered_conjs_set

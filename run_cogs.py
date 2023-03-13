@@ -452,13 +452,9 @@ for lf in args.lfs.split(";"):
                 for i in range(len(decoded_preds)):
 
                     # use conj-based eval function.
-                    str_eq = check_equal(decoded_labels[i], decoded_preds[i])
+                    # str_eq = check_equal(decoded_labels[i], decoded_preds[i])
                     set_eq = check_set_equal(decoded_labels[i], decoded_preds[i])
-                    if str_eq and not set_eq:
-                        print(decoded_preds[i])
-                        print(decoded_labels[i])
-                        
-                    if str_eq:
+                    if set_eq:
                         correct_count += 1
                     else:
                         pass
@@ -502,6 +498,13 @@ for lf in args.lfs.split(";"):
 
                     # use conj-based eval function.
                     cat = gen_dataset.eval_cat[total_count]
+                    
+                    str_eq = check_equal(decoded_labels[i], decoded_preds[i])
+                    set_eq = check_set_equal(decoded_labels[i], decoded_preds[i])
+                    if str_eq and not set_eq:
+                        print(decoded_preds[i])
+                        print(decoded_labels[i])
+                    
                     if check_equal(decoded_labels[i], decoded_preds[i]):
                         correct_count += 1
                         per_cat_eval[cat][0] += 1

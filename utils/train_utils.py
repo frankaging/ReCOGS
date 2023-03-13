@@ -257,7 +257,7 @@ def translate_invariant_form(lf):
             first_arg = conj.split()[-4]
             second_arg = conj.split()[-2]
             if first_arg == second_arg or first_arg in nouns_map:
-                continue # this is index collision, we casacade the error.
+                return {} # this is index collision, we casacade the error.
             if second_arg.isnumeric() and second_arg in nouns_map:
                 second_arg = nouns_map[second_arg]
                 new_conj = f"{role} . {pred} ( {second_arg} )"
@@ -287,7 +287,7 @@ def translate_invariant_form(lf):
     while len(nested_conjs) > 0:
         while_loop_count += 1
         if while_loop_count > 100:
-            break # no need, this answer has to be wrong!
+            return {}
         conj = nested_conjs.pop(0)
         if conj['second_arg'] not in childen_count_map or childen_count_map[conj['second_arg']] == 0:
             core = " AND ".join(vp_conjs_map[conj['second_arg']])
@@ -296,7 +296,7 @@ def translate_invariant_form(lf):
         else:
             # if the conj is corrupted, then we abandon just let it go and fail to compare.
             if conj['first_arg'] == conj['second_arg']:
-                continue
+                return {}
             nested_conjs.append(conj)
     
     filtered_conjs_set = set([])

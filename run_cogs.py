@@ -454,7 +454,7 @@ for lf in args.lfs.split(";"):
                     # use conj-based eval function.
                     str_eq = check_equal(decoded_labels[i], decoded_preds[i])
                     set_eq = check_set_equal(decoded_labels[i], decoded_preds[i])
-                    if str_eq != set_eq:
+                    if str_eq and not set_eq:
                         print(decoded_preds[i])
                         print(decoded_labels[i])
                         

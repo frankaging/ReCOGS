@@ -241,29 +241,54 @@ def translate_invariant_form(lf):
     conjs_set = set([])
     conjs = lf.split(" ; ")[-1].split(" AND ")
     vp_conjs_map = {}
+    nested_conjs = []
+    childen_count_map = {}
     for conj in conjs:
-        try:
-            if "nmod" in conj:
-                role = conj.split()[0]
-                pred = conj.split()[2]
-                first_arg = conj.split()[-4]
-                second_arg = conj.split()[-2]
-                new_conj = f"{role} . {pred} ( {nouns_map[first_arg]} , {nouns_map[second_arg]} )"
-                conjs_set.add(new_conj)
-            else:
-                role = conj.split()[0]
-                pred = conj.split()[2]
-                first_arg = conj.split()[-4]
-                second_arg = conj.split()[-2]
-                if second_arg.isnumeric():
-                    second_arg = nouns_map[second_arg]
+        if "nmod" in conj:
+            role = conj.split()[0]
+            pred = conj.split()[2]
+            first_arg = conj.split()[-4]
+            second_arg = conj.split()[-2]
+            new_conj = f"{role} . {pred} ( {nouns_map[first_arg]} , {nouns_map[second_arg]} )"
+            conjs_set.add(new_conj)
+        else:
+            role = conj.split()[0]
+            pred = conj.split()[2]
+            first_arg = conj.split()[-4]
+            second_arg = conj.split()[-2]
+            if second_arg.isnumeric() and second_arg in nouns_map:
+                second_arg = nouns_map[second_arg]
                 new_conj = f"{role} . {pred} ( {second_arg} )"
                 if first_arg in vp_conjs_map:
                     vp_conjs_map[first_arg].append(new_conj)
                 else:
                     vp_conjs_map[first_arg] = [new_conj]
-        except:
-            conjs_set.add(conj)
+            elif second_arg.isnumeric():
+                if first_arg not in childen_count_map:
+                    childen_count_map[first_arg] = 1
+                else:
+                    childen_count_map[first_arg] += 1
+                nested_conjs.append({
+                    "pred": pred,
+                    "role": role,
+                    "first_arg": first_arg,
+                    "second_arg": second_arg,
+                })
+            else:
+                new_conj = f"{role} . {pred} ( {second_arg} )"
+                if first_arg in vp_conjs_map:
+                    vp_conjs_map[first_arg].append(new_conj)
+                else:
+                    vp_conjs_map[first_arg] = [new_conj]
+                    
+    while len(nested_conjs) > 0:
+        conj = nested_conjs.pop(0)
+        if conj['second_arg'] not in childen_count_map or childen_count_map[conj['second_arg']] == 0:
+            core = " AND ".join(vp_conjs_map[conj['second_arg']])
+            vp_conjs_map[conj['first_arg']].append(f"{conj['role']} . {conj['pred']} ( {core} )")
+            childen_count_map[conj['first_arg']] -= 1
+        else:
+            nested_conjs.append(conj)
     
     filtered_conjs_set = set([])
     for conj in conjs_set:

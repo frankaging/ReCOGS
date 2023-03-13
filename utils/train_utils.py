@@ -180,3 +180,45 @@ class COGSTrainer(object):
                 self.model.module.save_pretrained(os.path.join(output_dir, 'model-last'))
             else:
                 self.model.save_pretrained(os.path.join(output_dir, 'model-last'))
+                
+def translate_invariant_form(lf):
+    nouns = lf.split(" AND ")[0].split(" ; ")[:-1]
+    nouns_map = {}
+    new_var = 0
+    for noun in nouns:
+        original_var = noun.split()[-2]
+        new_noun = noun.replace(str(original_var), str(new_var))
+        nouns_map[original_var] = new_noun
+        new_var += 1
+    
+    conjs_set = set([])
+    conjs = lf.split(" ; ")[-1].split(" AND ")
+    vp_conjs_map = {}
+    for conj in conjs:
+        try:
+            if "nmod" in conj:
+                first_arg = conj.split()[-4]
+                second_arg = conj.split()[-2]
+                new_conj = conj.replace(first_arg, nouns_map[first_arg])
+                new_conj = new_conj.replace(second_arg, nouns_map[second_arg])
+                conjs_set.add(new_conj)
+            else:
+                role = conj.split()[0]
+                pred = conj.split()[2]
+                first_arg = conj.split()[-4]
+                second_arg = conj.split()[-2]
+                if second_arg.isnumeric():
+                    second_arg = nouns_map[second_arg]
+                new_conj = f"{role} . {pred} ( {second_arg} )"
+                if (pred, first_arg) in vp_conjs_map:
+                    vp_conjs_map[(pred, first_arg)].append(new_conj)
+                else:
+                    vp_conjs_map[(pred, first_arg)] = [new_conj]
+        except:
+            conjs_set.add(conj)
+    for k, v in vp_conjs_map.items():
+        vp_conjs_map[k].sort()
+    for k, v in vp_conjs_map.items():
+        conjs_set.add(" AND ".join(v))
+            
+    return conjs_set

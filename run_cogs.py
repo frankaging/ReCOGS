@@ -451,39 +451,9 @@ for lf in args.lfs.split(";"):
 
                 for i in range(len(decoded_preds)):
 
-                    index_mapping = {}
-                    current_idx = 0
-                    for t in decoded_labels[i].split():
-                        if t.isnumeric():
-                            if int(t) not in index_mapping:
-                                index_mapping[int(t)] = current_idx
-                                current_idx += 1
-                    decoded_labels_ii = []
-                    for t in decoded_labels[i].split():
-                        if t.isnumeric():
-                            decoded_labels_ii += [str(index_mapping[int(t)])]
-                        else:
-                            decoded_labels_ii += [t]
-
-                    index_mapping = {}
-                    current_idx = 0
-                    for t in decoded_preds[i].split():
-                        if t.isnumeric():
-                            if int(t) not in index_mapping:
-                                index_mapping[int(t)] = current_idx
-                                current_idx += 1
-                    decoded_preds_ii = []
-                    for t in decoded_preds[i].split():
-                        if t.isnumeric():
-                            decoded_preds_ii += [str(index_mapping[int(t)])]
-                        else:
-                            decoded_preds_ii += [t]
-
-
-                    decoded_labels_ii_str = " ".join(decoded_labels_ii)
-                    decoded_preds_ii_str = " ".join(decoded_preds_ii)
-
-                    if decoded_preds_ii_str == decoded_labels_ii_str:
+                    # use conj-based eval function.
+                    if translate_invariant_form(decoded_labels) == \
+                        translate_invariant_form(decoded_preds):
                         correct_count += 1
                     else:
                         pass
@@ -525,40 +495,10 @@ for lf in args.lfs.split(";"):
                 input_labels = src_tokenizer.batch_decode(input_ids)
                 for i in range(len(decoded_preds)):
 
-                    index_mapping = {}
-                    current_idx = 0
-                    for t in decoded_labels[i].split():
-                        if t.isnumeric():
-                            if int(t) not in index_mapping:
-                                index_mapping[int(t)] = current_idx
-                                current_idx += 1
-                    decoded_labels_ii = []
-                    for t in decoded_labels[i].split():
-                        if t.isnumeric():
-                            decoded_labels_ii += [str(index_mapping[int(t)])]
-                        else:
-                            decoded_labels_ii += [t]
-
-                    index_mapping = {}
-                    current_idx = 0
-                    for t in decoded_preds[i].split():
-                        if t.isnumeric():
-                            if int(t) not in index_mapping:
-                                index_mapping[int(t)] = current_idx
-                                current_idx += 1
-                    decoded_preds_ii = []
-                    for t in decoded_preds[i].split():
-                        if t.isnumeric():
-                            decoded_preds_ii += [str(index_mapping[int(t)])]
-                        else:
-                            decoded_preds_ii += [t]
-
-
-                    decoded_labels_ii_str = " ".join(decoded_labels_ii)
-                    decoded_preds_ii_str = " ".join(decoded_preds_ii)
-
+                    # use conj-based eval function.
                     cat = gen_dataset.eval_cat[total_count]
-                    if decoded_preds_ii_str == decoded_labels_ii_str:
+                    if translate_invariant_form(decoded_labels) == \
+                        translate_invariant_form(decoded_preds):
                         correct_count += 1
                         per_cat_eval[cat][0] += 1
                         if cat == "obj_pp_to_subj_pp":

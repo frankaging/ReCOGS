@@ -321,7 +321,7 @@ def translate_invariant_form(lf):
                     vp_conjs_map[first_arg].append(new_conj)
                 else:
                     vp_conjs_map[first_arg] = [new_conj]
-
+    
     while_loop_count = 0
     while len(nested_conjs) > 0:
         while_loop_count += 1
@@ -342,7 +342,12 @@ def translate_invariant_form(lf):
     for k, v in vp_conjs_map.items():
         vp_conjs_map[k].sort()
     for k, v in vp_conjs_map.items():
-        filtered_conjs_set.add(" AND ".join(v))
+        vp_expression = " AND ".join(v)
+        if vp_expression in filtered_conjs_set:
+            return {} # this is not allowed. exact same VP expression is not allowed this time.
+        filtered_conjs_set.add(vp_expression)
     for conj in nmod_conjs_set:
+        if conj in filtered_conjs_set:
+            return {} # this is not allowed. exact same VP expression is not allowed this time.
         filtered_conjs_set.add(conj)
     return filtered_conjs_set

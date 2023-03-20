@@ -510,7 +510,7 @@ for lf in args.lfs.split(";"):
                         print(decoded_preds[i])
                         print(decoded_labels[i])
                     
-                    if check_equal(decoded_labels[i], decoded_preds[i]):
+                    if str_eq:
                         correct_count += 1
                         per_cat_eval[cat][0] += 1
                         if cat == "obj_pp_to_subj_pp":

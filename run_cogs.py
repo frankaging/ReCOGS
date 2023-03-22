@@ -452,13 +452,13 @@ for lf in args.lfs.split(";"):
                 for i in range(len(decoded_preds)):
 
                     str_eq = check_equal(decoded_labels[i], decoded_preds[i])
-                    set_eq = check_set_equal(decoded_labels[i], decoded_preds[i])
+                    set_eq = check_set_equal_neoD(decoded_labels[i], decoded_preds[i])
                     if str_eq != set_eq:
                         print("WARNING: set match and str match have diff answer on test")
                         print(decoded_preds[i])
                         print(decoded_labels[i])
                         
-                    if str_eq:
+                    if set_eq:
                         correct_count += 1
                     else:
                         pass
@@ -504,13 +504,13 @@ for lf in args.lfs.split(";"):
                     cat = gen_dataset.eval_cat[total_count]
                     
                     str_eq = check_equal(decoded_labels[i], decoded_preds[i])
-                    set_eq = check_set_equal(decoded_labels[i], decoded_preds[i])
+                    set_eq = check_set_equal_neoD(decoded_labels[i], decoded_preds[i])
                     if str_eq != set_eq:
                         print("WARNING: set match and str match have diff answer on gen")
                         print(decoded_preds[i])
                         print(decoded_labels[i])
                     
-                    if str_eq:
+                    if set_eq:
                         correct_count += 1
                         per_cat_eval[cat][0] += 1
                         if cat == "obj_pp_to_subj_pp":

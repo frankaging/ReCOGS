@@ -1,0 +1,57 @@
+{
+    "42_cogs_concat_k_1024": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 23.0,
+        "pp_recursion": 18.5,
+        "subj_to_obj_proper": 1.6,
+        "prim_to_obj_proper": 29.4,
+        "prim_to_subj_proper": 93.5,
+        "lex_acc": 31.913333333333334,
+        "overall_acc": 30.7,
+        "test_acc": 1.0
+    },
+    "66_cogs_concat_k_1024": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 22.3,
+        "pp_recursion": 26.1,
+        "subj_to_obj_proper": 3.9,
+        "prim_to_obj_proper": 0.0,
+        "prim_to_subj_proper": 0.0,
+        "lex_acc": 44.446666666666665,
+        "overall_acc": 34.23809523809524,
+        "test_acc": 1.0
+    },
+    "77_cogs_concat_k_1024": {
+        "obj_pp_to_subj_pp": 0.1,
+        "cp_recursion": 19.1,
+        "pp_recursion": 26.3,
+        "subj_to_obj_proper": 0.1,
+        "prim_to_obj_proper": 0.0,
+        "prim_to_subj_proper": 0.0,
+        "lex_acc": 28.333333333333332,
+        "overall_acc": 22.409523809523808,
+        "test_acc": 1.0
+    },
+    "88_cogs_concat_k_1024": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 22.8,
+        "pp_recursion": 17.0,
+        "subj_to_obj_proper": 29.9,
+        "prim_to_obj_proper": 0.0,
+        "prim_to_subj_proper": 1.3,
+        "lex_acc": 29.186666666666667,
+        "overall_acc": 24.22857142857143,
+        "test_acc": 1.0
+    },
+    "99_cogs_concat_k_1024": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 21.7,
+        "pp_recursion": 19.1,
+        "subj_to_obj_proper": 9.1,
+        "prim_to_obj_proper": 5.8,
+        "prim_to_subj_proper": 99.0,
+        "lex_acc": 31.953333333333333,
+        "overall_acc": 30.19047619047619,
+        "test_acc": 1.0
+    }
+}

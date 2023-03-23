@@ -1,0 +1,57 @@
+{
+    "42_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.1,
+        "pp_recursion": 10.7,
+        "subj_to_obj_proper": 84.2,
+        "prim_to_obj_proper": 84.3,
+        "prim_to_subj_proper": 99.8,
+        "lex_acc": 98.42,
+        "overall_acc": 83.5904761904762,
+        "test_acc": 1.0
+    },
+    "66_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.2,
+        "pp_recursion": 11.3,
+        "subj_to_obj_proper": 91.2,
+        "prim_to_obj_proper": 84.8,
+        "prim_to_subj_proper": 97.1,
+        "lex_acc": 98.98666666666666,
+        "overall_acc": 84.25714285714285,
+        "test_acc": 1.0
+    },
+    "77_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.0,
+        "pp_recursion": 11.4,
+        "subj_to_obj_proper": 96.8,
+        "prim_to_obj_proper": 91.5,
+        "prim_to_subj_proper": 99.3,
+        "lex_acc": 99.39333333333333,
+        "overall_acc": 85.23333333333333,
+        "test_acc": 1.0
+    },
+    "88_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.1,
+        "pp_recursion": 10.5,
+        "subj_to_obj_proper": 86.8,
+        "prim_to_obj_proper": 42.6,
+        "prim_to_subj_proper": 97.3,
+        "lex_acc": 98.81333333333333,
+        "overall_acc": 81.88095238095238,
+        "test_acc": 1.0
+    },
+    "99_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.4,
+        "pp_recursion": 9.0,
+        "subj_to_obj_proper": 98.3,
+        "prim_to_obj_proper": 74.8,
+        "prim_to_subj_proper": 99.1,
+        "lex_acc": 99.09333333333333,
+        "overall_acc": 84.19047619047619,
+        "test_acc": 1.0
+    }
+}

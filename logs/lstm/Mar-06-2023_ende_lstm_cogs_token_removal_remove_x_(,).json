@@ -1,0 +1,57 @@
+{
+    "42_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.0,
+        "pp_recursion": 9.4,
+        "subj_to_obj_proper": 6.9,
+        "prim_to_obj_proper": 38.2,
+        "prim_to_subj_proper": 91.5,
+        "lex_acc": 44.06,
+        "overall_acc": 38.423809523809524,
+        "test_acc": 1.0
+    },
+    "66_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.0,
+        "pp_recursion": 4.0,
+        "subj_to_obj_proper": 0.0,
+        "prim_to_obj_proper": 0.0,
+        "prim_to_subj_proper": 0.0,
+        "lex_acc": 44.71333333333333,
+        "overall_acc": 32.128571428571426,
+        "test_acc": 1.0
+    },
+    "77_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.0,
+        "pp_recursion": 3.3,
+        "subj_to_obj_proper": 0.0,
+        "prim_to_obj_proper": 1.8,
+        "prim_to_subj_proper": 0.0,
+        "lex_acc": 36.013333333333335,
+        "overall_acc": 25.966666666666665,
+        "test_acc": 1.0
+    },
+    "88_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.0,
+        "pp_recursion": 9.0,
+        "subj_to_obj_proper": 1.3,
+        "prim_to_obj_proper": 0.0,
+        "prim_to_subj_proper": 82.4,
+        "lex_acc": 31.673333333333332,
+        "overall_acc": 27.038095238095238,
+        "test_acc": 0.99
+    },
+    "99_cogs_token_removal_remove_x_(,)": {
+        "obj_pp_to_subj_pp": 0.0,
+        "cp_recursion": 0.0,
+        "pp_recursion": 3.0,
+        "subj_to_obj_proper": 1.6,
+        "prim_to_obj_proper": 3.6,
+        "prim_to_subj_proper": 98.4,
+        "lex_acc": 62.03999999999999,
+        "overall_acc": 49.39047619047619,
+        "test_acc": 1.0
+    }
+}

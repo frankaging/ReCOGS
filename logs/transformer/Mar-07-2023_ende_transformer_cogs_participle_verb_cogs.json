@@ -1,0 +1,57 @@
+{
+    "42_cogs_participle_verb_cogs": {
+        "obj_pp_to_subj_pp": 6.9,
+        "cp_recursion": 4.6,
+        "pp_recursion": 9.4,
+        "subj_to_obj_proper": 72.6,
+        "prim_to_obj_proper": 58.7,
+        "prim_to_subj_proper": 93.1,
+        "lex_acc": 98.69333333333333,
+        "overall_acc": 82.17619047619048,
+        "test_acc": 1.0
+    },
+    "66_cogs_participle_verb_cogs": {
+        "obj_pp_to_subj_pp": 8.9,
+        "cp_recursion": 2.7,
+        "pp_recursion": 9.5,
+        "subj_to_obj_proper": 85.6,
+        "prim_to_obj_proper": 62.3,
+        "prim_to_subj_proper": 99.2,
+        "lex_acc": 99.08,
+        "overall_acc": 83.54285714285714,
+        "test_acc": 1.0
+    },
+    "77_cogs_participle_verb_cogs": {
+        "obj_pp_to_subj_pp": 69.3,
+        "cp_recursion": 4.3,
+        "pp_recursion": 11.3,
+        "subj_to_obj_proper": 74.3,
+        "prim_to_obj_proper": 52.6,
+        "prim_to_subj_proper": 97.0,
+        "lex_acc": 96.40666666666667,
+        "overall_acc": 83.56666666666666,
+        "test_acc": 1.0
+    },
+    "88_cogs_participle_verb_cogs": {
+        "obj_pp_to_subj_pp": 0.1,
+        "cp_recursion": 4.3,
+        "pp_recursion": 8.8,
+        "subj_to_obj_proper": 87.3,
+        "prim_to_obj_proper": 75.3,
+        "prim_to_subj_proper": 98.8,
+        "lex_acc": 98.78666666666666,
+        "overall_acc": 83.63809523809523,
+        "test_acc": 1.0
+    },
+    "99_cogs_participle_verb_cogs": {
+        "obj_pp_to_subj_pp": 32.4,
+        "cp_recursion": 4.9,
+        "pp_recursion": 10.2,
+        "subj_to_obj_proper": 80.3,
+        "prim_to_obj_proper": 76.3,
+        "prim_to_subj_proper": 99.5,
+        "lex_acc": 98.24000000000001,
+        "overall_acc": 84.62857142857143,
+        "test_acc": 1.0
+    }
+}

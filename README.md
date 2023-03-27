@@ -5,7 +5,7 @@
   <p align="center">
     Zhengxuan Wu, Christopher D. Manning, Christopher Potts
     <br />
-    <a href="https://nlp.stanford.edu/~wuzhengx/"><strong>Read our preprint »</strong></a>
+    <a href="https://arxiv.org/abs/2303.13716"><strong>Read our preprint »</strong></a>
     <br />
     <br />
     <a href="https://github.com/frankaging/ReCOGS/issues">Report Bug</a>
@@ -25,7 +25,7 @@ If you use this repository, please consider to cite our relevant papers:
         title={{ReCOGS}: How Incidental Details of a Logical Form Overshadow an Evaluation of Semantic Interpretation}, 
         author={Wu, Zhengxuan and Manning, Christopher D. and Potts, Christopher},
         year={2023},
-        eprint={xxxx.xxxxx},
+        eprint={2303.13716},
         archivePrefix={arXiv},
         primaryClass={cs.LG}
   }

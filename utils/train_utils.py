@@ -13,6 +13,7 @@ import logging
 import time
 from utils.cogs_utils import *
 from utils.second_looks_utils import *
+from utils.compgen import recogs_exact_match
 import _pickle as cPickle
 from transformers import AutoModelForMaskedLM, AutoTokenizer, BertModel, BertConfig
 from model.encoder_decoder_hf import EncoderDecoderConfig, EncoderDecoderModel
@@ -231,11 +232,7 @@ def check_set_equal(left_lf, right_lf):
 
 def check_set_equal_neoD(left_lf, right_lf):
     try:
-        if translate_invariant_form_neoD(left_lf) == \
-        translate_invariant_form_neoD(right_lf):
-            return True
-        else:
-            return False
+        return recogs_exact_match(left_lf, right_lf)
     except:
         return False
     

@@ -32,7 +32,7 @@
         "overall_acc": 13.952380952380953,
         "test_acc": 0.98
     },
-    "88_recogs_cogs": {
+    "88_recogsNeoD_cogs": {
         "obj_pp_to_subj_pp": 0.0,
         "cp_recursion": 2.3,
         "pp_recursion": 0.2,

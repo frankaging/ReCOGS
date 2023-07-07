@@ -191,18 +191,6 @@ for lf in args.lfs.split(";"):
             sampler=SequentialSampler(test_dataset),
             collate_fn=train_dataset.collate_batch
         )
-
-        gen_dataset = COGSDataset(
-            cogs_path=args.data_path, 
-            src_tokenizer=src_tokenizer, 
-            tgt_tokenizer=tgt_tokenizer, 
-            partition=find_partition_name("gen", args.lf),
-        )
-        gen_dataloader = DataLoader(
-            gen_dataset, batch_size=args.eval_batch_size, 
-            sampler=SequentialSampler(gen_dataset),
-            collate_fn=train_dataset.collate_batch
-        )
         
         if model_name == "ende_transformer":
             logging.info("Baselining the Transformer Encoder-Decoder Model")
@@ -230,8 +218,6 @@ for lf in args.lfs.split(";"):
             logging.info("Loading pretrained model.")
             raw_weights = torch.load(os.path.join(args.model_path, 'pytorch_model.bin'))
             model.load_state_dict(raw_weights)
-            
-        
 
         if "cuda:" not in args.device:
             n_gpu = torch.cuda.device_count()
@@ -296,7 +282,7 @@ for lf in args.lfs.split(";"):
                 save_after_epoch=args.save_after_epoch,
             )
         
-        if args.do_test and not args.use_iiem:
+        if args.do_test:
             trainer.model.eval()
             epoch_iterator = tqdm(test_dataloader, desc="Iteration", position=0, leave=True)
             total_count = 0
@@ -321,7 +307,11 @@ for lf in args.lfs.split(";"):
                 decoded_labels = tgt_tokenizer.batch_decode(labels)
 
                 for i in range(len(decoded_preds)):
-                    if decoded_preds[i] == decoded_labels[i]:
+                    if args.use_iiem:
+                        eq = check_set_equal_neoD(decoded_labels[i], decoded_preds[i])
+                    else:
+                        eq = check_equal(decoded_labels[i], decoded_preds[i])
+                    if eq:
                         correct_count += 1
                     else:
                         pass
@@ -332,7 +322,20 @@ for lf in args.lfs.split(";"):
                 epoch_iterator.set_postfix({'acc': current_acc})
             test_acc = current_acc
 
-        if args.do_gen and not args.use_iiem:
+        if args.do_gen:
+            # TODO: potentially do bootstrap? and report once?
+            gen_dataset = COGSDataset(
+                cogs_path=args.data_path, 
+                src_tokenizer=src_tokenizer, 
+                tgt_tokenizer=tgt_tokenizer, 
+                partition=find_partition_name("gen", args.lf),
+            )
+            gen_dataloader = DataLoader(
+                gen_dataset, batch_size=args.eval_batch_size, 
+                sampler=SequentialSampler(gen_dataset),
+                collate_fn=train_dataset.collate_batch
+            )
+            
             per_cat_eval = {}
             for cat in set(gen_dataset.eval_cat):
                 per_cat_eval[cat] = [0, 0] # correct, total
@@ -362,7 +365,11 @@ for lf in args.lfs.split(";"):
                 input_labels = src_tokenizer.batch_decode(input_ids)
                 for i in range(len(decoded_preds)):
                     cat = gen_dataset.eval_cat[total_count]
-                    if decoded_preds[i] == decoded_labels[i]:
+                    if args.use_iiem:
+                        eq = check_set_equal_neoD(decoded_labels[i], decoded_preds[i])
+                    else:
+                        eq = check_equal(decoded_labels[i], decoded_preds[i])
+                    if eq:
                         correct_count += 1
                         per_cat_eval[cat][0] += 1
                     else:
@@ -396,156 +403,6 @@ for lf in args.lfs.split(";"):
                 elif k  == "prim_to_obj_proper":
                     prim_to_obj_proper_acc = 100 * v[0]/v[1]
                 elif k  == "prim_to_subj_proper": 
-                    prim_to_subj_proper_acc = 100 * v[0]/v[1]
-                else:
-                    lex_acc += v[0]
-                    lex_count += v[1]
-            lex_acc /= lex_count
-            lex_acc *= 100
-            current_acc *= 100
-
-            print(f"obj_pp_to_subj_pp: {struct_obj_subj_acc}")
-            print(f"cp_recursion: {struct_cp_acc}")
-            print(f"pp_recursion: {struct_pp_acc}")
-            print(f"subj_to_obj_proper: {subj_to_obj_proper_acc}")
-            print(f"prim_to_obj_proper: {prim_to_obj_proper_acc}")
-            print(f"prim_to_subj_proper: {prim_to_subj_proper_acc}")
-            print(f"LEX: {lex_acc}")
-            print(f"OVERALL: {current_acc}")
-
-            results[f"{seed}_{data_variant}_{lf}"] = {
-                "obj_pp_to_subj_pp" : struct_obj_subj_acc,
-                "cp_recursion" : struct_cp_acc,
-                "pp_recursion" : struct_pp_acc,
-                "subj_to_obj_proper" : subj_to_obj_proper_acc,
-                "prim_to_obj_proper" : prim_to_obj_proper_acc,
-                "prim_to_subj_proper" : prim_to_subj_proper_acc,
-                "lex_acc" : lex_acc,
-                "overall_acc" : current_acc,
-                "test_acc" : test_acc
-            }
-
-        if args.do_test and args.use_iiem:
-            trainer.model.eval()
-            epoch_iterator = tqdm(test_dataloader, desc="Iteration", position=0, leave=True)
-            total_count = 0
-            correct_count = 0
-            for step, inputs in enumerate(epoch_iterator):
-                input_ids = inputs["input_ids"].to(device)
-                attention_mask = inputs["attention_mask"].to(device)
-                labels = inputs["labels"].to(device)
-                if model_name == "ende_lstm":
-                    outputs = trainer.model.generate(
-                        input_ids,
-                        attention_mask=attention_mask,
-                    )
-                else:
-                    outputs = trainer.model.generate(
-                        input_ids,
-                        attention_mask=attention_mask,
-                        eos_token_id=model_config.eos_token_id,
-                        max_length=args.max_seq_len,
-                    )
-                decoded_preds = tgt_tokenizer.batch_decode(outputs)
-                decoded_labels = tgt_tokenizer.batch_decode(labels)
-
-                for i in range(len(decoded_preds)):
-
-                    str_eq = check_equal(decoded_labels[i], decoded_preds[i])
-                    set_eq = check_set_equal_neoD(decoded_labels[i], decoded_preds[i])
-                    if str_eq != set_eq:
-                        print("WARNING: set match and str match have diff answer on test")
-                        print(decoded_preds[i])
-                        print(decoded_labels[i])
-                        
-                    if set_eq:
-                        correct_count += 1
-                    else:
-                        pass
-                        # print(decoded_preds[i])
-                        # print(decoded_labels[i])
-
-                    total_count += 1
-                current_acc = round(correct_count/total_count, 2)
-                epoch_iterator.set_postfix({'acc': current_acc})
-            test_acc = current_acc
-            
-        if args.do_gen and args.use_iiem:
-            per_cat_eval = {}
-            for cat in set(gen_dataset.eval_cat):
-                per_cat_eval[cat] = [0, 0] # correct, total
-            trainer.model.eval()
-            epoch_iterator = tqdm(gen_dataloader, desc="Iteration", position=0, leave=True)
-            total_count = 0
-            correct_count = 0
-            for step, inputs in enumerate(epoch_iterator):
-                input_ids = inputs["input_ids"].to(device)
-                attention_mask = inputs["attention_mask"].to(device)
-                labels = inputs["labels"].to(device)
-                if model_name == "ende_lstm":
-                    outputs = trainer.model.generate(
-                        input_ids,
-                        attention_mask=attention_mask,
-                    )
-                else:
-                    outputs = trainer.model.generate(
-                        input_ids,
-                        attention_mask=attention_mask,
-                        eos_token_id=model_config.eos_token_id,
-                        max_length=args.max_seq_len,
-                    )
-                decoded_preds = tgt_tokenizer.batch_decode(outputs)
-                decoded_labels = tgt_tokenizer.batch_decode(labels)
-
-                input_labels = src_tokenizer.batch_decode(input_ids)
-                for i in range(len(decoded_preds)):
-
-                    # use conj-based eval function.
-                    cat = gen_dataset.eval_cat[total_count]
-                    
-                    str_eq = check_equal(decoded_labels[i], decoded_preds[i])
-                    set_eq = check_set_equal_neoD(decoded_labels[i], decoded_preds[i])
-                    if str_eq != set_eq:
-                        print("WARNING: set match and str match have diff answer on gen")
-                        print(decoded_preds[i])
-                        print(decoded_labels[i])
-                    
-                    if set_eq:
-                        correct_count += 1
-                        per_cat_eval[cat][0] += 1
-                        if cat == "obj_pp_to_subj_pp":
-                            pass
-                    else:
-                        if cat == "obj_pp_to_subj_pp":
-                            pass
-                            # print("input: ", input_labels[i])
-                            # print("pred: ", decoded_preds_ii_str)
-                            # print("actual: ", decoded_labels_ii_str)
-                            # print("cat: ", cat)
-                            # print()
-                    total_count += 1
-                    per_cat_eval[cat][1] += 1
-                current_acc = correct_count/total_count
-                epoch_iterator.set_postfix({'acc': current_acc})
-
-            struct_pp_acc = 0
-            struct_cp_acc = 0
-            struct_obj_subj_acc = 0
-
-            lex_acc = 0
-            lex_count = 0
-            for k, v in per_cat_eval.items():
-                if k  == "pp_recursion":
-                    struct_pp_acc = 100 * v[0]/v[1]
-                elif k  == "cp_recursion":
-                    struct_cp_acc = 100 * v[0]/v[1]
-                elif k  == "obj_pp_to_subj_pp":
-                    struct_obj_subj_acc = 100 * v[0]/v[1]
-                elif k  == "subj_to_obj_proper":
-                    subj_to_obj_proper_acc = 100 * v[0]/v[1]
-                elif k  == "prim_to_obj_proper":
-                    prim_to_obj_proper_acc = 100 * v[0]/v[1]
-                elif k  == "prim_to_subj_proper":
                     prim_to_subj_proper_acc = 100 * v[0]/v[1]
                 else:
                     lex_acc += v[0]
